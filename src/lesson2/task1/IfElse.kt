@@ -37,7 +37,8 @@ fun minBiRoot(a: Double, b: Double, c: Double): Double {
  */
 fun ageDescription(age: Int): String {
     return when {
-        age % 10 in 5..9 || age % 10 == 0 || age / 10 == 1 || age / 10 == 11 -> age.toString() + " лет"
+        age % 10 in 5..9 || age % 10 == 0 || age / 10 == 1
+                || age / 10 == 11 -> age.toString() + " лет"
         age % 10 == 1 -> age.toString() + " год"
         else -> age.toString() + " года"
     }
@@ -134,7 +135,8 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
         bigside = side3
         side3 = time2
     }
-    val cos = (side2 * side2 + side3 * side3 - bigside * bigside) / 2 * side2 * side3
+    val cos = (side2 * side2 + side3 * side3 - bigside * bigside) /
+            2 * side2 * side3
     return when {
         bigside > (side2 + side3) -> -1
         bigside * bigside == side2 * side2 + side3 * side3 -> 1
@@ -153,10 +155,16 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
  */
 fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int {
     return when {
-        c in a..b && d >= b -> b - c // расположение точек на оси a, c, b, d || a, c, b(d) //
-        a >= c && b <= d -> b - a // расположение точек на оси a(c), b(d) || c, a, b, d || c(a), b, d || c, a, b(d) //
-        a in c..d && b >= d -> d - a // расположение точек на оси c, a, d(b) || c, a, d, b //
-        c >= a && d <= b -> d - c // расположение точек на оси a, d, c, b || a(d), c, b || a, d, c(b) || a(d), c(b) //
+        c in a..b && d >= b -> b - c
+    // расположение точек на оси a, c, b, d || a, c, b(d)
+        a >= c && b <= d -> b - a
+    // расположение точек на оси a(c), b(d) || c, a, b, d || c(a), b, d
+    // || c, a, b(d)
+        a in c..d && b >= d -> d - a
+    // расположение точек на оси c, a, d(b) || c, a, d, b
+        c >= a && d <= b -> d - c
+    // расположение точек на оси a, d, c, b || a(d), c, b || a, d, c(b)
+    // || a(d), c(b)
         else -> -1
     }
 }
