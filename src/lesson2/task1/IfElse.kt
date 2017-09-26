@@ -121,31 +121,25 @@ fun rookOrBishopThreatens(kingX: Int, kingY: Int,
  * Если такой треугольник не существует, вернуть -1.
  */
 fun triangleKind(a: Double, b: Double, c: Double): Int {
-    if (a > b && a > c) {
-        val cos1 = (b * b + c * c - a * a) / 2 * b * c
-        return when {
-            a > (b + c) -> -1
-            a * a == b * b + c * c -> 1
-            cos1 < 0 -> 2
-            else -> 0
-        }
+    var bigside = a
+    var side2 = b
+    var side3 = c
+    if (side2 > bigside && side2 > side3) {
+        val time = bigside
+        bigside = side2
+        side2 = time
     }
-    if (b > a && b > c) {
-        val cos2 = (a * a + c * c - b * b) / 2 * a * c
-        return when {
-            b > (a + c) -> -1
-            b * b == a * a + c * c -> 1
-            cos2 < 0 -> 2
-            else -> 0
-        }
-    } else {
-        val cos3 = (b * b + a * a - c * c) / 2 * b * a
-        return when {
-            c > (b + a) -> -1
-            c * c == b * b + a * a -> 1
-            cos3 < 0 -> 2
-            else -> 0
-        }
+    if (side3 > bigside && side3 > side2) {
+        val time2 = bigside
+        bigside = side3
+        side3 = time2
+    }
+    val cos = (side2 * side2 + side3 * side3 - bigside * bigside) / 2 * side2 * side3
+    return when {
+        bigside > (side2 + side3) -> -1
+        bigside * bigside == side2 * side2 + side3 * side3 -> 1
+        cos < 0 -> 2
+        else -> 0
     }
 }
 
@@ -159,11 +153,10 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
  */
 fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int {
     return when {
-        b == c || d == a -> 0
-        c in a..b && d >= b -> b - c
-        a > c && b < d -> b - a
-        a in c..d && b >= d -> d - a
-        c > a && d < b -> d - c
+        c in a..b && d >= b -> b - c // расположение точек на оси a, c, b, d || a, c, b(d) //
+        a >= c && b <= d -> b - a // расположение точек на оси a(c), b(d) || c, a, b, d || c(a), b, d || c, a, b(d) //
+        a in c..d && b >= d -> d - a // расположение точек на оси c, a, d(b) || c, a, d, b //
+        c >= a && d <= b -> d - c // расположение точек на оси a, d, c, b || a(d), c, b || a, d, c(b) || a(d), c(b) //
         else -> -1
     }
 }
