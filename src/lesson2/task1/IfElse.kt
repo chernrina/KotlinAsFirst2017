@@ -139,7 +139,7 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
             2 * side2 * side3
     return when {
         bigside > (side2 + side3) -> -1
-        bigside * bigside == side2 * side2 + side3 * side3 -> 1
+        cos == 0.0 -> 1
         cos < 0 -> 2
         else -> 0
     }
@@ -156,15 +156,15 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
 fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int {
     return when {
         c in a..b && d >= b -> b - c
-    // расположение точек на оси a, c, b, d || a, c, b(d)
+    // расположение точек на оси a, c, b, d || a, c, b and d
         a >= c && b <= d -> b - a
-    // расположение точек на оси a(c), b(d) || c, a, b, d || c(a), b, d
-    // || c, a, b(d)
+    // расположение точек на оси a and c, b and d || c, a, b, d || c and a, b, d
+    // || c, a, b and d
         a in c..d && b >= d -> d - a
-    // расположение точек на оси c, a, d(b) || c, a, d, b
+    // расположение точек на оси c, a, d and b || c, a, d, b
         c >= a && d <= b -> d - c
-    // расположение точек на оси a, d, c, b || a(d), c, b || a, d, c(b)
-    // || a(d), c(b)
+    // расположение точек на оси a, c, d, b || a and c, d, b || a, c, d and b
+    // || a and c, d and b
         else -> -1
     }
 }

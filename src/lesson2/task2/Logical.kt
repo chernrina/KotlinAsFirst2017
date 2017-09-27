@@ -43,8 +43,8 @@ fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean =
  */
 fun circleInside(x1: Double, y1: Double, r1: Double,
                  x2: Double, y2: Double, r2: Double): Boolean {
-    val inCircle = sqr(x2 - x1) + sqr(y2 - y1)
-    return inCircle <= sqr(r2) && Math.sqrt(inCircle) <= r2 - r1
+    val inside = sqr(x2 - x1) + sqr(y2 - y1)
+    return inside <= sqr(r2) && Math.sqrt(inside) <= r2 - r1
 }
 
 /**
