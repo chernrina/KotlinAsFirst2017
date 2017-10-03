@@ -67,9 +67,9 @@ fun digitNumber(n: Int): Int {
     var number = 0
     var N = n
     do {
-        number++
         N /= 10
-    } while (N > 0)
+        number++
+    } while (N != 0)
     return number
 }
 
@@ -95,7 +95,7 @@ fun lcm(m: Int, n: Int): Int {
     val max = max(m, n)
     if (m == n || m % n == 0) return m
     else if (n % m == 0) return n
-    else for (i in 2..max) {
+    else for (i in max downTo 2) {
         if (n % i == 0 && m % i == 0) return m / i * n
     }
     return m * n
