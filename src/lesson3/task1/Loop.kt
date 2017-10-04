@@ -284,8 +284,8 @@ fun squareSequenceDigit(n: Int): Int {
         lengthOfSquare = 0
         sqr = i * i
     }
-    val lasti = i - 1
-    var lastsqr = lasti * lasti
+    val lastI = i - 1
+    var lastsqr = lastI * lastI
     if (sequenceLength == n) return lastsqr % 10
     else while (sequenceLength != n) {
         sequenceLength--
