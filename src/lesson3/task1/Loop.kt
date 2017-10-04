@@ -302,25 +302,29 @@ fun squareSequenceDigit(n: Int): Int {
  * Например, 2-я цифра равна 1, 9-я 2, 14-я 5.
  */
 fun fibSequenceDigit(n: Int): Int {
-    var i = 1
-    var number = fib(i)
+    var number1 = 1
+    var number2 = 0
+    var memory = number1
     var lengthOfNumber = 0
     var sequenceLength = 0
+    var lastNumber1 = number1
     while (sequenceLength < n) {
-        while (number > 0) {
-            number /= 10
+        while (number1 > 0) {
+            number1 /= 10
             lengthOfNumber++
         }
         sequenceLength += lengthOfNumber
-        i++
         lengthOfNumber = 0
-        number = fib(i)
+        number1 = memory + number2
+        memory = number1
+        number2 = lastNumber1
+        lastNumber1 = number1
     }
-    var lastnumber = fib(i - 1)
-    if (sequenceLength == n) return lastnumber % 10
+    var lastNumber = number2
+    if (sequenceLength == n) return lastNumber % 10
     else while (sequenceLength != n) {
         sequenceLength--
-        lastnumber /= 10
+        lastNumber /= 10
     }
-    return lastnumber % 10
+    return lastNumber % 10
 }
