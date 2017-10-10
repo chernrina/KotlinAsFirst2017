@@ -81,7 +81,17 @@ fun digitNumber(n: Int): Int {
  */
 fun fib(n: Int): Int {
     if (n == 1 || n == 2) return 1
-    else return fib(n - 2) + fib(n - 1)
+    var i = 2
+    var n1 = 1
+    var n2 = 1
+    var n3 = 0
+    while (n != i) {
+        n3 = n1 + n2
+        i++
+        n1 = n2
+        n2 = n3
+    }
+    return n3
 }
 
 
@@ -91,15 +101,19 @@ fun fib(n: Int): Int {
  * Для заданных чисел m и n найти наименьшее общее кратное, то есть,
  * минимальное число k, которое делится и на m и на n без остатка
  */
-fun lcm(m: Int, n: Int): Int {
-    val max = max(m, n)
-    if (m == n || m % n == 0) return m
-    else if (n % m == 0) return n
-    else for (i in max downTo 2) {
-        if (n % i == 0 && m % i == 0) return m / i * n
+
+fun gcd(a: Int, b: Int): Int {
+    var a1 = a
+    var b1 = b
+    while (a1 != 0 && b1 != 0) {
+        if (a1 > b) {
+            a1 %= b1
+        } else b1 %= a1
     }
-    return m * n
+    return a1 + b1
 }
+
+fun lcm(m: Int, n: Int): Int = m * n / gcd(m, n)
 
 /**
  * Простая
@@ -107,7 +121,7 @@ fun lcm(m: Int, n: Int): Int {
  * Для заданного числа n > 1 найти минимальный делитель, превышающий 1
  */
 fun minDivisor(n: Int): Int {
-    for (i in 2 until n) {
+    for (i in 2..n / 2) {
         if (n % i == 0) return i
     }
     return n
@@ -119,7 +133,7 @@ fun minDivisor(n: Int): Int {
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
 fun maxDivisor(n: Int): Int {
-    for (i in n - 1 downTo 2) {
+    for (i in n / 2 downTo 2) {
         if (n % i == 0) return i
     }
     return 1
@@ -177,12 +191,14 @@ fun sin(x: Double, eps: Double): Double {
         x1 = -x1
     }
     var sin = x1
-    while (abs(pow(x1, f) / factorial(f.toInt())) >= eps) {
+    var piece = pow(x1, f) / factorial(f.toInt())
+    while (abs(piece) >= eps) {
         if (i % 2 == 1) {
-            sin -= pow(x1, f) / factorial(f.toInt())
-        } else sin += pow(x1, f) / factorial(f.toInt())
+            sin -= piece
+        } else sin += piece
         i++
         f += 2
+        piece = pow(x1, f) / factorial(f.toInt())
     }
     return sin
 }
@@ -205,12 +221,14 @@ fun cos(x: Double, eps: Double): Double {
         x1 = -x1
     }
     var cos = 1.0
-    while (abs(pow(x1, f) / factorial(f.toInt())) >= eps) {
+    var piece = pow(x1, f) / factorial(f.toInt())
+    while (abs(piece) >= eps) {
         if (i % 2 == 1) {
-            cos -= pow(x1, f) / factorial(f.toInt())
-        } else cos += pow(x1, f) / factorial(f.toInt())
+            cos -= piece
+        } else cos += piece
         i++
         f += 2
+        piece = pow(x1, f) / factorial(f.toInt())
     }
     return cos
 }
@@ -222,20 +240,17 @@ fun cos(x: Double, eps: Double): Double {
  * Не использовать строки при решении задачи.
  */
 fun revert(n: Int): Int {
-    var number = n
-    var i = 0.0
-    var number2 = 0.0
-    while (number / 10 != 0) {
-        i++
-        number /= 10
-    }
+    var i = digitNumber(n) - 1
+    var number2 = 0
     var n1 = n
+    var pow = Math.pow(10.0, i.toDouble()).toInt()
     while (i >= 0.0) {
-        number2 += n1 % 10 * pow(10.0, i)
+        number2 += n1 % 10 * pow
         i--
         n1 /= 10
+        pow /= 10
     }
-    return number2.toInt()
+    return number2
 }
 
 /**
@@ -272,16 +287,12 @@ fun hasDifferentDigits(n: Int): Boolean {
 fun squareSequenceDigit(n: Int): Int {
     var sequenceLength = 0
     var i = 1
-    var lengthOfSquare = 0
+    var lengthOfSquare: Int
     var sqr = i * i
     while (sequenceLength < n) {
-        while (sqr > 0) {
-            sqr /= 10
-            lengthOfSquare++
-        }
+        lengthOfSquare = digitNumber(sqr)
         sequenceLength += lengthOfSquare
         i++
-        lengthOfSquare = 0
         sqr = i * i
     }
     val lastI = i - 1
@@ -305,16 +316,12 @@ fun fibSequenceDigit(n: Int): Int {
     var number1 = 1
     var number2 = 0
     var memory = number1
-    var lengthOfNumber = 0
+    var lengthOfNumber: Int
     var sequenceLength = 0
     var lastNumber1 = number1
     while (sequenceLength < n) {
-        while (number1 > 0) {
-            number1 /= 10
-            lengthOfNumber++
-        }
+        lengthOfNumber = digitNumber(number1)
         sequenceLength += lengthOfNumber
-        lengthOfNumber = 0
         number1 = memory + number2
         memory = number1
         number2 = lastNumber1
