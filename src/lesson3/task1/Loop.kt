@@ -102,18 +102,15 @@ fun fib(n: Int): Int {
  * минимальное число k, которое делится и на m и на n без остатка
  */
 
-fun gcd(a: Int, b: Int): Int {
-    var a1 = a
-    var b1 = b
-    while (a1 != 0 && b1 != 0) {
-        if (a1 > b) {
-            a1 %= b1
-        } else b1 %= a1
+fun lcm(m: Int, n: Int): Int {
+    val max = Math.max(m, n)
+    if (m == n && m % n == 0) return m
+    if (n % m == 0) return n
+    for (i in max downTo 2) {
+        if (m % i == 0 && n % i == 0) return m / i * n
     }
-    return a1 + b1
+    return m * n
 }
-
-fun lcm(m: Int, n: Int): Int = m * n / gcd(m, n)
 
 /**
  * Простая
