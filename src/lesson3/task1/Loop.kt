@@ -109,7 +109,7 @@ fun gcd(m: Int, n: Int): Int {
 fun lcm(m: Int, n: Int): Int {
     if (m == n && m % n == 0) return m
     if (n % m == 0) return n
-    return m * n / gcd(m, n)
+    return m / gcd(m, n) * n
 }
 
 /**
@@ -118,7 +118,7 @@ fun lcm(m: Int, n: Int): Int {
  * Для заданного числа n > 1 найти минимальный делитель, превышающий 1
  */
 fun minDivisor(n: Int): Int {
-    for (i in 2..n / 2) {
+    for (i in 2..Math.sqrt(n.toDouble()).toInt()) {
         if (n % i == 0) return i
     }
     return n
@@ -130,7 +130,7 @@ fun minDivisor(n: Int): Int {
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
 fun maxDivisor(n: Int): Int {
-    for (i in n / 2 downTo 2) {
+    for (i in n / 2 downTo Math.sqrt(n.toDouble()).toInt()) {
         if (n % i == 0) return i
     }
     return 1
@@ -143,7 +143,7 @@ fun maxDivisor(n: Int): Int {
  * Взаимно простые числа не имеют общих делителей, кроме 1.
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
-fun isCoPrime(m: Int, n: Int): Boolean = lcm(m, n) == m * n
+fun isCoPrime(m: Int, n: Int): Boolean = gcd(m, n) == 1
 
 /**
  * Простая
@@ -173,7 +173,7 @@ fun squareBetweenExists(m: Int, n: Int): Boolean {
  */
 fun sin(x: Double, eps: Double): Double {
     var i = 1
-    var f = 3.0
+    var f = 1.0
     var x1 = abs(x)
     while (x1 > PI * 2) {
         x1 -= PI * 2
@@ -181,15 +181,15 @@ fun sin(x: Double, eps: Double): Double {
     if (x < 0) {
         x1 = -x1
     }
-    var sin = x1
-    var piece = pow(x1, f) / factorial(f.toInt())
+    var sin = 0.0
+    var piece = x1
     while (abs(piece) >= eps) {
         if (i % 2 == 1) {
-            sin -= piece
-        } else sin += piece
+            sin += piece
+        } else sin -= piece
         i++
         f += 2
-        piece = pow(x1, f) / factorial(f.toInt())
+        piece = piece * x1 * x1 / (f * (f - 1))
     }
     return sin
 }
@@ -203,7 +203,7 @@ fun sin(x: Double, eps: Double): Double {
  */
 fun cos(x: Double, eps: Double): Double {
     var i = 1
-    var f = 2.0
+    var f = 0.0
     var x1 = abs(x)
     while (x1 > PI * 2) {
         x1 -= PI * 2
@@ -211,15 +211,15 @@ fun cos(x: Double, eps: Double): Double {
     if (x < 0) {
         x1 = -x1
     }
-    var cos = 1.0
-    var piece = pow(x1, f) / factorial(f.toInt())
+    var cos = 0.0
+    var piece = 1.0
     while (abs(piece) >= eps) {
         if (i % 2 == 1) {
-            cos -= piece
-        } else cos += piece
+            cos += piece
+        } else cos -= piece
         i++
         f += 2
-        piece = pow(x1, f) / factorial(f.toInt())
+        piece = piece * x1 * x1 / (f * (f - 1))
     }
     return cos
 }
@@ -231,15 +231,11 @@ fun cos(x: Double, eps: Double): Double {
  * Не использовать строки при решении задачи.
  */
 fun revert(n: Int): Int {
-    var i = digitNumber(n) - 1
-    var number2 = 0
-    var n1 = n
-    var pow = Math.pow(10.0, i.toDouble()).toInt()
-    while (i >= 0.0) {
-        number2 += n1 % 10 * pow
-        i--
+    var n1 = n / 10
+    var number2 = n % 10
+    while (n1 != 0) {
+        number2 = number2 * 10 + n1 % 10
         n1 /= 10
-        pow /= 10
     }
     return number2
 }
