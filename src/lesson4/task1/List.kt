@@ -212,12 +212,25 @@ fun factorize(n: Int): List<Int> {
     var n1 = n
     var k = 0
     val list = mutableListOf<Int>()
-    for (i in 2..n) {
-        for (i1 in 1..i) {
+    for (i in 2..Math.sqrt(n.toDouble()).toInt()) {
+        if (n1 % i == 0) {
+            k++
+            if (k > 0) break
+        }
+    }
+    if (k == 0) {
+        list.add(n)
+        return list
+    }
+    k = 0
+    for (i in 2 until n) {
+        for (i1 in 2..Math.sqrt(i.toDouble()).toInt()) {
             if (i % i1 == 0) {
                 k++
             }
-            while (k == 2 && n1 % i == 0) {
+        }
+        if (k == 0) {
+            while (n1 % i == 0 && n1 != 0) {
                 n1 /= i
                 list.add(i)
             }
@@ -234,17 +247,7 @@ fun factorize(n: Int): List<Int> {
  * Результат разложения вернуть в виде строки, например 75 -> 3*5*5
  */
 fun factorizeToString(n: Int): String {
-    var k = 0
-    var string = ""
-    for (i in 1..n) {
-        if (n % i == 0) {
-            k++
-        }
-    }
-    if (k == 2) {
-        string += n
-        return string
-    }
+    if (factorize(n).size == 1) return n.toString()
     return factorize(n).joinToString(separator = "*")
 }
 
@@ -374,7 +377,7 @@ fun roman(n: Int): String {
     var str = ""
     var number = n
     while (number != 0) {
-        if (number in 1000..3999) {
+        if (number in 1000..Int.MAX_VALUE) {
             str += list[6]
             number -= 1000
         }
