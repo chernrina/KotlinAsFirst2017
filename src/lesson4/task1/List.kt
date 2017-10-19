@@ -227,6 +227,7 @@ fun factorize(n: Int): List<Int> {
         for (i1 in 2..Math.sqrt(i.toDouble()).toInt()) {
             if (i % i1 == 0) {
                 k++
+                if (k > 0) break
             }
         }
         if (k == 0) {
@@ -236,6 +237,7 @@ fun factorize(n: Int): List<Int> {
             }
         }
         k = 0
+        if (n1 == 0) break
     }
     return list
 }
