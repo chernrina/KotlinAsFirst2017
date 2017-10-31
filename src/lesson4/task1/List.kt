@@ -223,7 +223,7 @@ fun factorize(n: Int): List<Int> {
         return list
     }
     k = 0
-    for (i in 2 until n) {
+    for (i in 2 until Math.sqrt(n.toDouble()).toInt()) {
         for (i1 in 2..Math.sqrt(i.toDouble()).toInt()) {
             if (i % i1 == 0) {
                 k++
@@ -442,4 +442,4 @@ fun roman(n: Int): String {
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
-fun russian(n: Int): String = TODO ()
+fun russian(n: Int): String = TODO()
