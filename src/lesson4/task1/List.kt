@@ -223,7 +223,7 @@ fun factorize(n: Int): List<Int> {
         return list
     }
     k = 0
-    for (i in 2 until Math.sqrt(n.toDouble()).toInt()) {
+    for (i in 2..n / 2) {
         for (i1 in 2..Math.sqrt(i.toDouble()).toInt()) {
             if (i % i1 == 0) {
                 k++
