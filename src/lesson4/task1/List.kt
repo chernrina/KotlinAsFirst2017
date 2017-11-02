@@ -217,6 +217,9 @@ fun factorize(n: Int): List<Int> {
         }
         if (n1 == 0) break
     }
+    if (n1 / list[list.size - 1] > n / 2) {
+        list.add(n1 / list[list.size - 1])
+    }
     if (list.size == 0) {
         list.add(n)
     }
