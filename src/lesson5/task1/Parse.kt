@@ -98,20 +98,20 @@ fun dateDigitToStr(digital: String): String {
             " июня ", " июля ", " августа ", " сентября ", " октября ",
             " ноября ", " декабря ")
     val parts = digital.split(".")
-    var str = ""
+    val str = StringBuilder()
     if (parts.size != 3) return ""
     try {
         if (parts.size != 3) return ""
-        str += parts[0].toInt()
+        str.append(parts[0].toInt())
         if (parts[1].toInt() !in 1..12) return ""
         for (i in 0 until month.size) {
             if (i + 1 == parts[1].toInt()) {
-                str += month[i]
+                str.append(month[i])
             }
         }
         if (parts[1].toInt() !in 1..12) return ""
-        str += parts[2].toInt()
-        return str
+        str.append(parts[2].toInt())
+        return str.toString()
     } catch (e: NumberFormatException) {
         return ""
     }
@@ -134,18 +134,18 @@ fun flattenPhoneNumber(phone: String): String {
             '6', '7', '8', '9')
     val list1 = listOf('0', '1', '2', '3', '4', '5',
             '6', '7', '8', '9')
-    var str = ""
+    val str = StringBuilder()
     if (phone[0] == '+') {
-        str += '+'
+        str.append('+')
     }
     for (i in 0 until phone.length) {
         if (phone[i] in list) {
             if (phone[i] in list1) {
-                str += phone[i]
+                str.append(phone[i])
             }
         } else return ""
     }
-    return str
+    return str.toString()
 }
 
 /**
@@ -161,7 +161,7 @@ fun flattenPhoneNumber(phone: String): String {
 fun bestLongJump(jumps: String): Int {
     val list = listOf('%', ' ', '-', '0', '1', '2', '3', '4', '5',
             '6', '7', '8', '9')
-    var max = 0
+    var max = -1
     try {
         for (i in 0 until jumps.length) {
             if (jumps[i] !in list) return -1
@@ -193,8 +193,8 @@ fun bestLongJump(jumps: String): Int {
 fun bestHighJump(jumps: String): Int {
     val list = listOf('+', '%', ' ', '-', '0', '1', '2', '3', '4', '5',
             '6', '7', '8', '9')
-    var max = 0
-    var str = ""
+    var max = -1
+    val str = StringBuilder()
     val parts = jumps.split(" ")
     try {
         for (i in 0 until jumps.length) {
@@ -203,14 +203,13 @@ fun bestHighJump(jumps: String): Int {
         if (parts.size % 2 != 0) return -1
         for (i in 0 until parts.size step 2) {
             if (parts[i].toInt() > max) {
-                str += parts[i + 1]
+                str.append(parts[i + 1])
                 for (i1 in 0 until str.length) {
                     if (str[i1] == '+') {
                         max = parts[i].toInt()
-                    }
-                    max = max
+                    } else max = max
                 }
-                str = ""
+                str.delete(0, str.length)
             }
         }
         return max
@@ -232,7 +231,7 @@ fun bestHighJump(jumps: String): Int {
 fun plusMinus(expression: String): Int {
     val parts = expression.split(" ")
     var result = parts[0].toInt()
-    val e = IllegalArgumentException("Description")
+    val e = IllegalArgumentException("plusMinus")
     try {
         if ((parts.size - 1) % 2 != 0) throw e
         for (i in 1 until parts.size step 2) {
