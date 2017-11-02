@@ -110,8 +110,8 @@ fun buildSumExample(list: List<Int>) = list.joinToString(separator = " + ", post
  */
 fun abs(v: List<Double>): Double {
     var abs = 0.0
-    for (elements in v) {
-        abs += sqr(elements)
+    for (element in v) {
+        abs += sqr(element)
     }
     return Math.sqrt(abs)
 }
@@ -123,8 +123,8 @@ fun abs(v: List<Double>): Double {
  */
 fun mean(list: List<Double>): Double {
     var sum = 0.0
-    for (elements in list) {
-        sum += elements
+    for (element in list) {
+        sum += element
     }
     return when {
         list.isEmpty() -> 0.0
@@ -175,8 +175,10 @@ fun times(a: List<Double>, b: List<Double>): Double {
  */
 fun polynom(p: List<Double>, x: Double): Double {
     var y = 0.0
+    var x1 = 1.0
     for (i in 0 until p.size) {
-        y += p[i] * Math.pow(x, i.toDouble())
+        y += p[i] * x1
+        x1 *= x
     }
     return y
 }
@@ -192,11 +194,8 @@ fun polynom(p: List<Double>, x: Double): Double {
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
 fun accumulate(list: MutableList<Double>): MutableList<Double> {
-    for (i in 0 until list.size) {
-        if (i == 0) {
-            list[i] = list[i]
-        } else
-            list[i] += list[i - 1]
+    for (i in 1 until list.size) {
+        list[i] += list[i - 1]
     }
     return list
 }
@@ -210,34 +209,16 @@ fun accumulate(list: MutableList<Double>): MutableList<Double> {
  */
 fun factorize(n: Int): List<Int> {
     var n1 = n
-    var k = 0
     val list = mutableListOf<Int>()
-    for (i in 2..Math.sqrt(n.toDouble()).toInt()) {
-        if (n1 % i == 0) {
-            k++
-            if (k > 0) break
+    for (i in 2..Math.sqrt(n.toDouble()).toInt() + 1) {
+        while (n1 % i == 0 && n1 != 0) {
+            n1 /= i
+            list.add(i)
         }
-    }
-    if (k == 0) {
-        list.add(n)
-        return list
-    }
-    k = 0
-    for (i in 2..n / 2) {
-        for (i1 in 2..Math.sqrt(i.toDouble()).toInt()) {
-            if (i % i1 == 0) {
-                k++
-                if (k > 0) break
-            }
-        }
-        if (k == 0) {
-            while (n1 % i == 0 && n1 != 0) {
-                n1 /= i
-                list.add(i)
-            }
-        }
-        k = 0
         if (n1 == 0) break
+    }
+    if (list.size == 0) {
+        list.add(n)
     }
     return list
 }
@@ -248,10 +229,7 @@ fun factorize(n: Int): List<Int> {
  * Разложить заданное натуральное число n > 1 на простые множители.
  * Результат разложения вернуть в виде строки, например 75 -> 3*5*5
  */
-fun factorizeToString(n: Int): String {
-    if (factorize(n).size == 1) return n.toString()
-    return factorize(n).joinToString(separator = "*")
-}
+fun factorizeToString(n: Int): String = factorize(n).joinToString(separator = "*")
 
 /**
  * Средняя
@@ -263,22 +241,14 @@ fun factorizeToString(n: Int): String {
 fun convert(n: Int, base: Int): List<Int> {
     val list = mutableListOf<Int>()
     var n1 = n
-    var element: Double
+    var element: Int
     while (n1 >= base) {
-        element = n1.toDouble() % base
+        element = n1 % base
         n1 /= base
-        list.add(element.toInt())
+        list.add(element)
     }
-    list.add(n1 % base)
-    var memory: Int
-    if (list.size == 1) return list
-    val size = (list.size / 2) - 1
-    for (i in 0..size) {
-        memory = list[i]
-        list[i] = list[list.size - 1 - i]
-        list[list.size - 1 - i] = memory
-    }
-    return list
+    list.add(n1)
+    return list.reversed()
 }
 
 /**
@@ -289,35 +259,19 @@ fun convert(n: Int, base: Int): List<Int> {
  * строчными буквами: 10 -> a, 11 -> b, 12 -> c и так далее.
  * Например: n = 100, base = 4 -> 1210, n = 250, base = 14 -> 13c
  */
+
 fun convertToString(n: Int, base: Int): String {
-    val letter = listOf('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
-            'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z')
-    val list = mutableListOf<Int>()
-    var n1 = n
-    var element: Double
-    while (n1 >= base) {
-        element = n1.toDouble() % base
-        n1 /= base
-        list.add(element.toInt())
-    }
-    list.add(n1 % base)
-    var memory: Any
-    val size = (list.size / 2) - 1
-    for (i in 0..size) {
-        memory = list[i]
-        list[i] = list[list.size - 1 - i]
-        list[list.size - 1 - i] = memory
-    }
-    var string = ""
-    for (i in 0 until list.size) {
-        if (list[i] < 10) {
-            string += list[i]
+    val letter = "abcdefghijklmnopqrstuvwxyz"
+    val list = convert(n, base)
+    val str = StringBuilder()
+    for (element in list) {
+        if (element < 10) {
+            str.append(element)
         } else {
-            memory = list[i]
-            string += letter[memory - 10]
+            str.append(letter[element - 10])
         }
     }
-    return string
+    return str.toString()
 }
 
 /**
@@ -329,11 +283,9 @@ fun convertToString(n: Int, base: Int): String {
  */
 fun decimal(digits: List<Int>, base: Int): Int {
     var number = 0
-    var i = 0
-    while (i <= digits.size - 1) {
+    for (i in 0 until digits.size) {
         number += digits[digits.size - 1 - i] *
                 Math.pow(base.toDouble(), i.toDouble()).toInt()
-        i++
     }
     return number
 }
@@ -348,18 +300,14 @@ fun decimal(digits: List<Int>, base: Int): Int {
  * Например: str = "13c", base = 14 -> 250
  */
 fun decimalFromString(str: String, base: Int): Int {
-    val letter = listOf('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
-            'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z')
     val list = mutableListOf<Int>()
-    var number: Int
-    for (i in 0 until str.length) {
-        if (str[i].toInt() in 48..57) {
-            list.add(str[i].toInt() - 48)
-        } else for (i1 in 0 until letter.size) {
-            if (str[i] == letter[i1]) {
-                number = 10 + i1
-                list.add(number)
-            }
+    val unicodeNumber = 48
+    val unicodeLetter = 97
+    for (element in str) {
+        if (element.toInt() >= unicodeNumber) {
+            if (element.toInt() >= unicodeLetter) {
+                list.add(element.toInt() - unicodeLetter + 10)
+            } else list.add(element.toInt() - unicodeNumber)
         }
     }
     return decimal(list, base)
@@ -375,64 +323,21 @@ fun decimalFromString(str: String, base: Int): Int {
  */
 
 fun roman(n: Int): String {
-    val list = listOf('I', 'V', 'X', 'L', 'C', 'D', 'M')
-    var str = ""
+    val list = listOf(Pair(1, "I"), Pair(4, "IV"), Pair(5, "V"), Pair(9, "IX"),
+            Pair(10, "X"), Pair(40, "XL"), Pair(50, "L"), Pair(90, "XC"),
+            Pair(100, "C"), Pair(400, "CD"), Pair(500, "D"), Pair(900, "CM"),
+            Pair(1000, "M"))
+    val str = StringBuilder()
     var number = n
+    var i = list.size - 1
     while (number != 0) {
-        if (number in 1000..Int.MAX_VALUE) {
-            str += list[6]
-            number -= 1000
+        while (number >= list[i].first) {
+            str.append(list[i].second)
+            number -= list[i].first
         }
-        if (number in 900..999) {
-            str = str + list[4] + list[6]
-            number -= 900
-        }
-        if (number in 500..899) {
-            str += list[5]
-            number -= 500
-        }
-        if (number in 400..499) {
-            str = str + list[4] + list[5]
-            number -= 400
-        }
-        if (number in 100..399) {
-            str += list[4]
-            number -= 100
-        }
-        if (number in 90..99) {
-            str = str + list[2] + list[4]
-            number -= 90
-        }
-        if (number in 50..89) {
-            str += list[3]
-            number -= 50
-        }
-        if (number in 40..49) {
-            str = str + list[2] + list[3]
-            number -= 40
-        }
-        if (number in 10..39) {
-            str += list[2]
-            number -= 10
-        }
-        if (number == 9) {
-            str = str + list[0] + list[2]
-            number -= 9
-        }
-        if (number in 5..8) {
-            str += list[1]
-            number -= 5
-        }
-        if (number == 4) {
-            str = str + list[0] + list[1]
-            number -= 4
-        }
-        if (number in 1..3) {
-            str += list[0]
-            number -= 1
-        }
+        i--
     }
-    return str
+    return str.toString()
 }
 
 /**
