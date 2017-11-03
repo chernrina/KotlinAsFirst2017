@@ -135,7 +135,7 @@ fun flattenPhoneNumber(phone: String): String {
     val list1 = listOf('0', '1', '2', '3', '4', '5',
             '6', '7', '8', '9')
     val str = StringBuilder()
-    if (phone.length == 0) return ""
+    if (phone.isEmpty()) return ""
     if (phone[0] == '+') {
         str.append('+')
     }
@@ -259,8 +259,9 @@ fun firstDuplicateIndex(str: String): Int {
     val parts = str.split(" ")
     var length = 0
     var k: Int
+    var i = 0
     if (parts.size == 1) return -1
-    else for (i in 0 until parts.size - 1) {
+    while (i != parts.size - 2) {
         if (parts[i].toLowerCase() == parts[i + 1].toLowerCase()) {
             k = i
             if (k == 0) return 0
@@ -269,7 +270,7 @@ fun firstDuplicateIndex(str: String): Int {
                 k--
             }
             return length + i
-        } else break
+        } else i++
     }
     return -1
 }
@@ -292,7 +293,7 @@ fun mostExpensive(description: String): String {
     try {
         if (parts.size % 2 != 0) return ""
         else for (i in 1 until parts.size step 2) {
-            if (parts[i].toDouble() > price) {
+            if (parts[i].toDouble() >= price) {
                 price = parts[i].toDouble()
                 mostExpensive = parts[i - 1]
             } else break
