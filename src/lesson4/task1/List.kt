@@ -176,8 +176,8 @@ fun times(a: List<Double>, b: List<Double>): Double {
 fun polynom(p: List<Double>, x: Double): Double {
     var y = 0.0
     var x1 = 1.0
-    for (i in 0 until p.size) {
-        y += p[i] * x1
+    for (element in p) {
+        y += element * x1
         x1 *= x
     }
     return y
@@ -215,7 +215,7 @@ fun factorize(n: Int): List<Int> {
             n1 /= i
             list.add(i)
         }
-        if (n1 == 0) break
+        if (n1 == 1) break
     }
     if (list.size == 0) {
         list.add(n)
@@ -304,11 +304,12 @@ fun decimal(digits: List<Int>, base: Int): Int {
  */
 fun decimalFromString(str: String, base: Int): Int {
     val list = mutableListOf<Int>()
-    val unicodeNumber = 48
-    val unicodeLetter = 97
+    val unicodeNumber = '0'.toInt()
+    val unicodeLetter = 'a'.toInt()
     for (element in str) {
-        if (element.toInt() >= unicodeNumber) {
-            if (element.toInt() >= unicodeLetter) {
+        if (element.toInt() in unicodeNumber..unicodeNumber + 9 ||
+                element.toInt() in unicodeLetter..unicodeLetter + 25) {
+            if (element.toInt() in unicodeLetter..unicodeLetter + 25) {
                 list.add(element.toInt() - unicodeLetter + 10)
             } else list.add(element.toInt() - unicodeNumber)
         }
