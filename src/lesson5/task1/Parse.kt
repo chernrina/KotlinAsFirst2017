@@ -161,6 +161,7 @@ fun bestLongJump(jumps: String): Int {
         }
         val parts = jumps.split(" ")
         for (part in parts) {
+            if (part == "") return -1
             if (part != "%" && part != "-" && part.toInt() > max) {
                 max = part.toInt()
             }
@@ -328,6 +329,7 @@ fun fromRoman(roman: String): Int {
         part1 = 0
         part2 = 0
     }
+    if (i == 0) return -1
     return ans
 }
 
@@ -384,7 +386,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
         }
     }
     if (number1 != number2) throw e
-    while (k != commands.length && step < limit && i <= cells - 1) {
+    while (k != commands.length && step < limit && i in 0 until cells) {
         when {
             commands[k] == '>' -> i++
             commands[k] == '<' -> i--
