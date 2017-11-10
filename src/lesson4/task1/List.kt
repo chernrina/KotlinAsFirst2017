@@ -211,7 +211,7 @@ fun factorize(n: Int): List<Int> {
     var n1 = n
     val list = mutableListOf<Int>()
     for (i in 2..Math.sqrt(n.toDouble()).toInt() + 1) {
-        while (n1 % i == 0 && n1 != 0) {
+        while (n1 % i == 0) {
             n1 /= i
             list.add(i)
         }
@@ -304,14 +304,12 @@ fun decimal(digits: List<Int>, base: Int): Int {
  */
 fun decimalFromString(str: String, base: Int): Int {
     val list = mutableListOf<Int>()
-    val unicodeNumber = '0'.toInt()
-    val unicodeLetter = 'a'.toInt()
     for (element in str) {
-        if (element.toInt() in unicodeNumber..unicodeNumber + 9 ||
-                element.toInt() in unicodeLetter..unicodeLetter + 25) {
-            if (element.toInt() in unicodeLetter..unicodeLetter + 25) {
-                list.add(element.toInt() - unicodeLetter + 10)
-            } else list.add(element.toInt() - unicodeNumber)
+        if (element.toInt() in '0'.toInt()..'9'.toInt() ||
+                element.toInt() in 'a'.toInt()..'z'.toInt()) {
+            if (element.toInt() in 'a'.toInt()..'z'.toInt()) {
+                list.add(element.toInt() - 'a'.toInt() + 10)
+            } else list.add(element.toInt() - '0'.toInt())
         }
     }
     return decimal(list, base)

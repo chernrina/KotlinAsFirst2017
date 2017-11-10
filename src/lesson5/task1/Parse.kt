@@ -116,17 +116,26 @@ fun dateDigitToStr(digital: String): String {
  * При неверном формате вернуть пустую строку
  */
 fun flattenPhoneNumber(phone: String): String {
-    val legalChars = " +-()0123456789"
+    val legalChars = " -+()0123456789"
     val number = "0123456789"
     val str = StringBuilder()
+    var k: Int
     if (phone.isEmpty()) return ""
-    if (phone[0] == '+') {
-        str.append('+')
-    }
-    for (element in phone) {
-        if (element in legalChars) {
-            if (element in number) {
-                str.append(element)
+    for (i in 0 until phone.length) {
+        if (phone[i] in legalChars) {
+            when {
+                phone[i] == '+' && i == 0 -> if (phone[i + 1] in number) str.append(phone[i])
+                phone[i] == '(' -> {
+                    k = i
+                    while (phone[k] != ')') {
+                        k++
+                    }
+                    if (k - i == 1 || phone[i + 1] !in number) return ""
+                }
+                phone[i] == ')' || phone[i] == '-' || phone[i] == ' ' ||
+                        phone[i] == '+' -> {
+                }
+                phone[i] in number -> str.append(phone[i])
             }
         } else return ""
     }
@@ -150,9 +159,9 @@ fun bestLongJump(jumps: String): Int {
         for (i in 0 until jumps.length) {
             if (jumps[i] !in legalChars) return -1
         }
-        val parts = jumps.split("%", " ", "-")
+        val parts = jumps.split(" ")
         for (part in parts) {
-            if (part != "" && part.toInt() > max) {
+            if (part != "%" && part != "-" && part.toInt() > max) {
                 max = part.toInt()
             }
         }
@@ -208,17 +217,21 @@ fun bestHighJump(jumps: String): Int {
 fun plusMinus(expression: String): Int {
     val parts = expression.split(" ")
     var result: Int
-    val e = IllegalArgumentException("plusMinus")
-    if ((parts.size - 1) % 2 != 0) throw e
-    if (parts[0] != "+" && parts[0] != "-") result = parts[0].toInt()
-    else throw e
-    for (i in 1 until parts.size step 2) {
-        if (parts[i] == "+" || parts[i] == "-") {
-            if (parts[i] == "+") result += parts[i + 1].toInt()
-            else result -= parts[i + 1].toInt()
-        } else throw e
+    val e1 = IllegalArgumentException("plusMinus")
+    try {
+        if ((parts.size - 1) % 2 != 0) throw e1
+        if (parts[0] != "+" && parts[0] != "-") result = parts[0].toInt()
+        else throw e1
+        for (i in 1 until parts.size step 2) {
+            if (parts[i] == "+" || parts[i] == "-") {
+                if (parts[i] == "+") result += parts[i + 1].toInt()
+                else result -= parts[i + 1].toInt()
+            } else throw e1
+        }
+        return result
+    } catch (e: NumberFormatException) {
+        throw e1
     }
-    return result
 }
 
 /**
@@ -286,7 +299,37 @@ fun mostExpensive(description: String): String {
  *
  * Вернуть -1, если roman не является корректным римским числом
  */
-fun fromRoman(roman: String): Int = TODO()
+fun fromRoman(roman: String): Int {
+    val numberToRoman = listOf(Pair(1, "I"), Pair(5, "V"), Pair(10, "X"),
+            Pair(50, "L"), Pair(100, "C"), Pair(500, "D"), Pair(1000, "M"))
+    var ans = 0
+    var i = 0
+    var part1 = 0
+    var part2 = 0
+    while (i != roman.length) {
+        for (k in 0 until numberToRoman.size) {
+            if (roman[i].toString() == numberToRoman[k].second) {
+                part1 = numberToRoman[k].first
+            }
+            if (i != roman.length - 1) {
+                if (roman[i + 1].toString() == numberToRoman[k].second) {
+                    part2 = numberToRoman[k].first
+                }
+            }
+        }
+        if (part1 == 0) return -1
+        if (part1 >= part2) {
+            ans += part1
+            i++
+        } else {
+            ans += part2 - part1
+            i += 2
+        }
+        part1 = 0
+        part2 = 0
+    }
+    return ans
+}
 
 /**
  * Очень сложная
@@ -324,4 +367,52 @@ fun fromRoman(roman: String): Int = TODO()
  * IllegalArgumentException должен бросаться даже если ошибочная команда не была достигнута в ходе выполнения.
  *
  */
-fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> = TODO()
+fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
+    val e = IllegalArgumentException("computeDeviceCells")
+    val e1 = IllegalStateException("computeDeviceCells")
+    val ans = MutableList(cells) { 0 }
+    var i = cells / 2
+    var k = 0
+    var number1 = 0
+    var number2 = 0
+    var pair = 0
+    var step = 0
+    for (i1 in 0 until commands.length) {
+        when {
+            commands[i1] == '[' -> number1++
+            commands[i1] == ']' -> number2++
+        }
+    }
+    if (number1 != number2) throw e
+    while (k != commands.length && step < limit && i <= cells - 1) {
+        when {
+            commands[k] == '>' -> i++
+            commands[k] == '<' -> i--
+            commands[k] == '+' -> ans[i]++
+            commands[k] == '-' -> ans[i]--
+            commands[k] == '[' -> if (ans[i] == 0) {
+                pair++
+                while (pair != 0) {
+                    k++
+                    if (commands[k] == '[') pair++
+                    if (commands[k] == ']') pair--
+                }
+            }
+            commands[k] == ']' -> if (ans[i] != 0) {
+                pair++
+                while (pair != 0) {
+                    k--
+                    if (commands[k] == ']') pair++
+                    if (commands[k] == '[') pair--
+                }
+            }
+            commands[k] == ' ' -> {
+            }
+            else -> throw e
+        }
+        k++
+        step++
+    }
+    if (i == cells) throw e1
+    return ans
+}
