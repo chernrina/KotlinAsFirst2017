@@ -120,22 +120,41 @@ fun flattenPhoneNumber(phone: String): String {
     val number = "0123456789"
     val str = StringBuilder()
     var k: Int
+    var plus = 0
+    var pair = 0
     if (phone.isEmpty()) return ""
     for (i in 0 until phone.length) {
         if (phone[i] in legalChars) {
-            when {
-                phone[i] == '+' && i == 0 -> if (phone[i + 1] in number) str.append(phone[i])
-                phone[i] == '(' -> {
-                    k = i
+            when (phone[i]) {
+                ' ' -> {
+                }
+                '-' -> {
+                }
+                '+' -> if (phone[i + 1] in number && plus == 0) {
+                    str.append(phone[i])
+                }
+                else return ""
+                '(' -> {
+                    plus++
+                    k = i + 1
                     while (phone[k] != ')') {
+                        when (phone[k]) {
+                            ')' -> pair++
+                            '(' -> return ""
+                            in number -> pair++
+                            else -> {
+                            }
+                        }
                         k++
                     }
-                    if (k - i == 1 || phone[i + 1] !in number) return ""
+                    if (pair < 1) return ""
                 }
-                phone[i] == ')' || phone[i] == '-' || phone[i] == ' ' ||
-                        phone[i] == '+' -> {
+                in number -> {
+                    plus++
+                    str.append(phone[i])
                 }
-                phone[i] in number -> str.append(phone[i])
+                ')' -> if (pair == 0) return ""
+
             }
         } else return ""
     }
@@ -223,10 +242,9 @@ fun plusMinus(expression: String): Int {
         if (parts[0] != "+" && parts[0] != "-") result = parts[0].toInt()
         else throw e1
         for (i in 1 until parts.size step 2) {
-            if (parts[i] == "+" || parts[i] == "-") {
-                if (parts[i] == "+") result += parts[i + 1].toInt()
-                else result -= parts[i + 1].toInt()
-            } else throw e1
+            if (parts[i] == "+") result += parts[i + 1].toInt()
+            else if (parts[i] == "-") result -= parts[i + 1].toInt()
+            else throw e1
         }
         return result
     } catch (e: NumberFormatException) {
@@ -300,22 +318,15 @@ fun mostExpensive(description: String): String {
  * Вернуть -1, если roman не является корректным римским числом
  */
 fun fromRoman(roman: String): Int {
-    val numberToRoman = listOf(Pair(1, "I"), Pair(5, "V"), Pair(10, "X"),
-            Pair(50, "L"), Pair(100, "C"), Pair(500, "D"), Pair(1000, "M"))
+    val romanToNumber = mapOf("I" to 1, "V" to 5, "X" to 10,
+            "L" to 50, "C" to 100, "D" to 500, "M" to 1000)
     var ans = 0
     var i = 0
-    var part1 = 0
-    var part2 = 0
     while (i != roman.length) {
-        for (k in 0 until numberToRoman.size) {
-            if (roman[i].toString() == numberToRoman[k].second) {
-                part1 = numberToRoman[k].first
-            }
-            if (i != roman.length - 1) {
-                if (roman[i + 1].toString() == numberToRoman[k].second) {
-                    part2 = numberToRoman[k].first
-                }
-            }
+        val part1 = romanToNumber[roman[i].toString()] ?: 0
+        var part2 = 0
+        if (i != roman.length - 1) {
+            part2 = romanToNumber[roman[i + 1].toString()] ?: 0
         }
         if (part1 == 0) return -1
         if (part1 >= part2) {
@@ -325,8 +336,6 @@ fun fromRoman(roman: String): Int {
             ans += part2 - part1
             i += 2
         }
-        part1 = 0
-        part2 = 0
     }
     if (i == 0) return -1
     return ans
@@ -369,8 +378,8 @@ fun fromRoman(roman: String): Int {
  *
  */
 fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
-    val e = IllegalArgumentException("computeDeviceCells")
-    val e1 = IllegalStateException("computeDeviceCells")
+    val error = IllegalArgumentException("computeDeviceCells")
+    val error1 = IllegalStateException("computeDeviceCells")
     val ans = MutableList(cells) { 0 }
     var i = cells / 2
     var k = 0
@@ -383,15 +392,16 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
             commands[i1] == '[' -> number1++
             commands[i1] == ']' -> number2++
         }
+        if (number2 > number1) throw error
     }
-    if (number1 != number2) throw e
-    while (k != commands.length && step < limit && i in 0 until cells) {
-        when {
-            commands[k] == '>' -> i++
-            commands[k] == '<' -> i--
-            commands[k] == '+' -> ans[i]++
-            commands[k] == '-' -> ans[i]--
-            commands[k] == '[' -> if (ans[i] == 0) {
+    if (number1 != number2) throw error
+    while (k != commands.length && step < limit) {
+        when (commands[k]) {
+            '>' -> i++
+            '<' -> i--
+            '+' -> ans[i]++
+            '-' -> ans[i]--
+            '[' -> if (ans[i] == 0) {
                 pair++
                 while (pair != 0) {
                     k++
@@ -399,7 +409,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
                     if (commands[k] == ']') pair--
                 }
             }
-            commands[k] == ']' -> if (ans[i] != 0) {
+            ']' -> if (ans[i] != 0) {
                 pair++
                 while (pair != 0) {
                     k--
@@ -407,13 +417,14 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
                     if (commands[k] == '[') pair--
                 }
             }
-            commands[k] == ' ' -> {
+            ' ' -> {
             }
-            else -> throw e
+            else -> throw error
         }
         k++
         step++
+        if (i !in 0 until cells) throw error1
     }
-    if (i !in 0 until cells) throw e1
+
     return ans
 }
