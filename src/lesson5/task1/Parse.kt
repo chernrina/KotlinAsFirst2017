@@ -122,6 +122,7 @@ fun flattenPhoneNumber(phone: String): String {
     var k: Int
     var plus = 0
     var pair = 0
+    var only = 0
     if (phone.isEmpty()) return ""
     for (i in 0 until phone.length) {
         if (phone[i] in legalChars) {
@@ -135,11 +136,13 @@ fun flattenPhoneNumber(phone: String): String {
                 }
                 else return ""
                 '(' -> {
+                    if (only == 0) {
+                        only++
+                    } else return ""
                     plus++
                     k = i + 1
                     while (phone[k] != ')') {
                         when (phone[k]) {
-                            ')' -> pair++
                             '(' -> return ""
                             in number -> pair++
                             else -> {
@@ -318,16 +321,13 @@ fun mostExpensive(description: String): String {
  * Вернуть -1, если roman не является корректным римским числом
  */
 fun fromRoman(roman: String): Int {
-    val romanToNumber = mapOf("I" to 1, "V" to 5, "X" to 10,
-            "L" to 50, "C" to 100, "D" to 500, "M" to 1000)
+    val romanToNumber = mapOf('I' to 1, 'V' to 5, 'X' to 10,
+            'L' to 50, 'C' to 100, 'D' to 500, 'M' to 1000)
     var ans = 0
     var i = 0
     while (i != roman.length) {
-        val part1 = romanToNumber[roman[i].toString()] ?: 0
-        var part2 = 0
-        if (i != roman.length - 1) {
-            part2 = romanToNumber[roman[i + 1].toString()] ?: 0
-        }
+        val part1 = romanToNumber[roman[i]] ?: 0
+        val part2 = if (i != roman.length - 1) romanToNumber[roman[i + 1]] ?: 0 else 0
         if (part1 == 0) return -1
         if (part1 >= part2) {
             ans += part1
@@ -378,8 +378,8 @@ fun fromRoman(roman: String): Int {
  *
  */
 fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
-    val error = IllegalArgumentException("computeDeviceCells")
-    val error1 = IllegalStateException("computeDeviceCells")
+    val argumentException = IllegalArgumentException("computeDeviceCells")
+    val stateException = IllegalStateException("computeDeviceCells")
     val ans = MutableList(cells) { 0 }
     var i = cells / 2
     var k = 0
@@ -388,13 +388,13 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     var pair = 0
     var step = 0
     for (i1 in 0 until commands.length) {
-        when {
-            commands[i1] == '[' -> number1++
-            commands[i1] == ']' -> number2++
+        when (commands[i1]) {
+            '[' -> number1++
+            ']' -> number2++
         }
-        if (number2 > number1) throw error
+        if (number2 > number1) throw argumentException
     }
-    if (number1 != number2) throw error
+    if (number1 != number2) throw argumentException
     while (k != commands.length && step < limit) {
         when (commands[k]) {
             '>' -> i++
@@ -405,26 +405,29 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
                 pair++
                 while (pair != 0) {
                     k++
-                    if (commands[k] == '[') pair++
-                    if (commands[k] == ']') pair--
+                    when (commands[k]) {
+                        '[' -> pair++
+                        ']' -> pair--
+                    }
                 }
             }
             ']' -> if (ans[i] != 0) {
                 pair++
                 while (pair != 0) {
                     k--
-                    if (commands[k] == ']') pair++
-                    if (commands[k] == '[') pair--
+                    when (commands[k]) {
+                        ']' -> pair++
+                        '[' -> pair--
+                    }
                 }
             }
             ' ' -> {
             }
-            else -> throw error
+            else -> throw argumentException
         }
         k++
         step++
-        if (i !in 0 until cells) throw error1
+        if (i !in 0 until cells) throw stateException
     }
-
     return ans
 }
