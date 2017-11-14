@@ -122,7 +122,7 @@ fun flattenPhoneNumber(phone: String): String {
     var k: Int
     var plus = 0
     var pair = 0
-    var only = 0
+    var only = false
     if (phone.isEmpty()) return ""
     for (i in 0 until phone.length) {
         if (phone[i] in legalChars) {
@@ -136,21 +136,21 @@ fun flattenPhoneNumber(phone: String): String {
                 }
                 else return ""
                 '(' -> {
-                    if (only == 0) {
-                        only++
-                    } else return ""
-                    plus++
-                    k = i + 1
-                    while (phone[k] != ')') {
-                        when (phone[k]) {
-                            '(' -> return ""
-                            in number -> pair++
-                            else -> {
+                    if (!only) {
+                        only = phone[i] == '('
+                        plus++
+                        k = i + 1
+                        while (phone[k] != ')') {
+                            when (phone[k]) {
+                                '(' -> return ""
+                                in number -> pair++
+                                else -> {
+                                }
                             }
+                            k++
                         }
-                        k++
-                    }
-                    if (pair < 1) return ""
+                        if (pair < 1) return ""
+                    } else return ""
                 }
                 in number -> {
                     plus++
@@ -380,21 +380,21 @@ fun fromRoman(roman: String): Int {
 fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     val argumentException = IllegalArgumentException("computeDeviceCells")
     val stateException = IllegalStateException("computeDeviceCells")
+    val legalChars = "+->< "
     val ans = MutableList(cells) { 0 }
     var i = cells / 2
     var k = 0
-    var number1 = 0
-    var number2 = 0
-    var pair = 0
+    var brackets = 0
     var step = 0
     for (i1 in 0 until commands.length) {
         when (commands[i1]) {
-            '[' -> number1++
-            ']' -> number2++
+            '[' -> brackets++
+            ']' -> brackets--
+            !in legalChars -> throw argumentException
         }
-        if (number2 > number1) throw argumentException
+        if (brackets < 0) throw argumentException
     }
-    if (number1 != number2) throw argumentException
+    if (brackets != 0) throw argumentException
     while (k != commands.length && step < limit) {
         when (commands[k]) {
             '>' -> i++
@@ -402,7 +402,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
             '+' -> ans[i]++
             '-' -> ans[i]--
             '[' -> if (ans[i] == 0) {
-                pair++
+                var pair = 1
                 while (pair != 0) {
                     k++
                     when (commands[k]) {
@@ -412,7 +412,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
                 }
             }
             ']' -> if (ans[i] != 0) {
-                pair++
+                var pair = 1
                 while (pair != 0) {
                     k--
                     when (commands[k]) {
@@ -423,7 +423,6 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
             }
             ' ' -> {
             }
-            else -> throw argumentException
         }
         k++
         step++
