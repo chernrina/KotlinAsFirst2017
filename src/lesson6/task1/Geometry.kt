@@ -198,10 +198,7 @@ class Line private constructor(val b: Double, val angle: Double) {
 fun lineBySegment(s: Segment): Line {
     val point = s.begin
     var angle = asin(abs(s.begin.y - s.end.y) / s.begin.distance(s.end))
-    if (angle !in 0.0..PI) {
-        while (angle >= PI) angle -= PI
-        while (angle < 0.0) angle += PI
-    }
+    if (angle < 0.0) angle += PI
     return Line(point, angle)
 }
 
@@ -223,10 +220,7 @@ fun lineByPoints(a: Point, b: Point): Line {
 fun bisectorByPoints(a: Point, b: Point): Line {
     val center = Point((a.x + b.x) / 2, (a.y + b.y) / 2)
     var angle = asin(abs(a.y - b.y) / a.distance(b)) + PI / 2
-    if (angle < 0.0 || angle >= PI) {
-        while (angle >= PI) angle -= PI
-        while (angle < 0.0) angle += PI
-    }
+    if (angle == PI) angle = 0.0
     return Line(center, angle)
 }
 
