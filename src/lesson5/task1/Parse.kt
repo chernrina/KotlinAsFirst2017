@@ -140,7 +140,7 @@ fun flattenPhoneNumber(phone: String): String {
                         only = phone[i] == '('
                         plus++
                         k = i + 1
-                        while (phone[k] != ')') {
+                        while (i < phone.length && phone[k] != ')') {
                             when (phone[k]) {
                                 '(' -> return ""
                                 in number -> pair++
