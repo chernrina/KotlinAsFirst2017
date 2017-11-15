@@ -162,10 +162,10 @@ class Line private constructor(val b: Double, val angle: Double) {
     fun crossPoint(other: Line): Point {
         val x: Double
         val y: Double
-        if (angle - PI / 2 <= 10e-14) {
+        if (abs(angle - PI / 2) <= 10e-14) {
             x = -b
             y = (x * sin(other.angle) + other.b) / cos(other.angle)
-        } else if (other.angle - PI / 2 <= 10e-14) {
+        } else if (abs(other.angle - PI / 2) <= 10e-14) {
             x = -other.b
             y = (x * sin(angle) + b) / cos(angle)
         } else {
@@ -194,8 +194,7 @@ class Line private constructor(val b: Double, val angle: Double) {
  */
 fun lineBySegment(s: Segment): Line {
     val point = s.begin
-    var angle = atan((abs(s.begin.y - s.end.y) / (abs(s.begin.x - s.end.x))))
-    if (angle in -PI / 2..0.0) angle += PI
+    val angle = abs(atan((abs(s.begin.y - s.end.y) / (abs(s.begin.x - s.end.x)))))
     return Line(point, angle)
 }
 
