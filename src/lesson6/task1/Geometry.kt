@@ -115,14 +115,12 @@ fun diameter(vararg points: Point): Segment {
     if (points.size < 2) throw e
     else
         for (i in 0 until points.size) {
-            for (i1 in 0 until points.size) {
-                if (i1 != i) {
-                    length = points[i].distance(points[i1])
-                    if (length > maxLength) {
-                        maxLength = length
-                        begin = points[i]
-                        end = points[i1]
-                    }
+            for (i1 in i + 1 until points.size) {
+                length = points[i].distance(points[i1])
+                if (length > maxLength) {
+                    maxLength = length
+                    begin = points[i]
+                    end = points[i1]
                 }
             }
         }
@@ -162,21 +160,20 @@ class Line private constructor(val b: Double, val angle: Double) {
      * Для этого необходимо составить и решить систему из двух уравнений (каждое для своей прямой)
      */
     fun crossPoint(other: Line): Point {
-        val x:Double
-        val y:Double
-        if (angle == PI / 2) {
+        val x: Double
+        val y: Double
+        if (angle - PI / 2 <= 10e-14) {
             x = -b
-            y = (x*sin(other.angle) + other.b) / cos(other.angle)
-        }
-        else if (other.angle == PI / 2) {
+            y = (x * sin(other.angle) + other.b) / cos(other.angle)
+        } else if (other.angle - PI / 2 <= 10e-14) {
             x = -other.b
-            y = (x*sin(angle) + b) / cos(angle)
+            y = (x * sin(angle) + b) / cos(angle)
         } else {
-            x = (other.b* cos(angle) - b*cos(other.angle)) /
-                    (sin(angle)*cos(other.angle) - sin(other.angle)*cos(angle))
-            y = (x*sin(angle) + b) / cos(angle)
+            x = (other.b * cos(angle) - b * cos(other.angle)) /
+                    (sin(angle) * cos(other.angle) - sin(other.angle) * cos(angle))
+            y = (x * sin(angle) + b) / cos(angle)
         }
-        return Point(x,y)
+        return Point(x, y)
     }
 
     override fun equals(other: Any?) = other is Line && angle == other.angle && b == other.b
@@ -197,8 +194,8 @@ class Line private constructor(val b: Double, val angle: Double) {
  */
 fun lineBySegment(s: Segment): Line {
     val point = s.begin
-    var angle = asin(abs(s.begin.y - s.end.y) / s.begin.distance(s.end))
-    if (angle < 0.0) angle += PI
+    var angle = atan((abs(s.begin.y - s.end.y) / (abs(s.begin.x - s.end.x))))
+    if (angle in -PI / 2..0.0) angle += PI
     return Line(point, angle)
 }
 
@@ -219,7 +216,7 @@ fun lineByPoints(a: Point, b: Point): Line {
  */
 fun bisectorByPoints(a: Point, b: Point): Line {
     val center = Point((a.x + b.x) / 2, (a.y + b.y) / 2)
-    var angle = asin(abs(a.y - b.y) / a.distance(b)) + PI / 2
+    var angle = atan(abs(a.y - b.y) / abs(a.x - b.x)) + PI / 2
     if (angle == PI) angle = 0.0
     return Line(center, angle)
 }
@@ -239,14 +236,12 @@ fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle> {
     if (circles.size < 2) throw e
     else
         for (i in 0 until circles.size) {
-            for (i1 in 0 until circles.size) {
-                if (i1 != i) {
-                    length = circles[i].distance(circles[i1])
-                    if (length < minLength) {
-                        minLength = length
-                        circle1 = circles[i]
-                        circle2 = circles[i1]
-                    }
+            for (i1 in i + 1 until circles.size) {
+                length = circles[i].distance(circles[i1])
+                if (length < minLength) {
+                    minLength = length
+                    circle1 = circles[i]
+                    circle2 = circles[i1]
                 }
             }
         }

@@ -137,10 +137,10 @@ fun flattenPhoneNumber(phone: String): String {
                 else return ""
                 '(' -> {
                     if (!only) {
-                        only = phone[i] == '('
+                        only = true
                         plus++
                         k = i + 1
-                        while (i < phone.length && phone[k] != ')') {
+                        while (k < phone.length && phone[k] != ')') {
                             when (phone[k]) {
                                 '(' -> return ""
                                 in number -> pair++
