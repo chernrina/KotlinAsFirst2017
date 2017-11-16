@@ -217,8 +217,8 @@ fun lineByPoints(a: Point, b: Point): Line {
  */
 fun bisectorByPoints(a: Point, b: Point): Line {
     val center = Point((a.x + b.x) / 2, (a.y + b.y) / 2)
-    var angle = atan(abs(a.y - b.y) / abs(a.x - b.x)) + PI / 2
-    if (angle == PI) angle = 0.0
+    var angle = lineByPoints(a,b).angle + PI / 2
+    if (angle >= PI) angle -= PI
     return Line(center, angle)
 }
 
