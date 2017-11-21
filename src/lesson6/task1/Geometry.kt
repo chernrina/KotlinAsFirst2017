@@ -192,14 +192,14 @@ class Line private constructor(val b: Double, val angle: Double) {
  * Построить прямую по отрезку
  */
 fun lineBySegment(s: Segment): Line {
-    var angle = 0.0
+    var angle = atan2(s.end.y - s.begin.y, s.end.x - s.begin.x)
     if ((s.end.y - s.begin.y) <= 0) {
-        if ((s.end.x - s.begin.x) < 0) {
+        if ((s.end.x - s.begin.x) <= 0) {
             angle = atan2(abs(s.end.y - s.begin.y), abs(s.end.x - s.begin.x))
         } else if ((s.end.y - s.begin.y) >= 10e-14) {
-            angle = atan2(abs(s.end.y - s.begin.y), -(s.end.x - s.begin.x))
+            angle = atan2(abs(s.end.y - s.begin.y), s.begin.x - s.end.x)
         }
-    } else angle = atan2(s.end.y - s.begin.y, s.end.x - s.begin.x)
+    }
     return Line(s.begin, angle)
 }
 
