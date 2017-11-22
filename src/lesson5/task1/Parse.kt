@@ -131,10 +131,22 @@ fun flattenPhoneNumber(phone: String): String {
                 }
                 '-' -> {
                 }
-                '+' -> if (phone[i + 1] in number && plus == 0) {
-                    str.append(phone[i])
+                '+' -> {
+                    k = i + 1
+                    while (k < phone.length && phone[k] !in number) {
+                        when (phone[k]) {
+                            ' ' -> {
+                            }
+                            '-' -> {
+                            }
+                            else -> return ""
+                        }
+                        k++
+
+                    }
+                    if (k != phone.length) str.append(phone[i])
+                    else return ""
                 }
-                else return ""
                 '(' -> {
                     if (!only) {
                         only = true
