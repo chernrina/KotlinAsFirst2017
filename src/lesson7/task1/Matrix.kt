@@ -43,6 +43,7 @@ interface Matrix<E> {
  */
 fun <E> createMatrix(height: Int, width: Int, e: E): Matrix<E> {
     val result = MatrixImpl<E>(height, width)
+    if (height <= 0 || width <= 0) throw IllegalArgumentException("createMatrix")
     for (row in 0 until height) {
         for (column in 0 until width) {
             result[row, column] = e
@@ -58,11 +59,6 @@ fun <E> createMatrix(height: Int, width: Int, e: E): Matrix<E> {
  */
 class MatrixImpl<E>(override val height: Int, override val width: Int) : Matrix<E> {
     private val map = mutableMapOf<Cell, E>()
-
-    init {
-        assert(height > 0) { throw IllegalArgumentException("MatrixImpl") }
-        assert(width > 0) { throw IllegalArgumentException("MatrixImpl") }
-    }
 
     override fun get(row: Int, column: Int): E {
         val cell = Cell(row, column)
