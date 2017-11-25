@@ -43,7 +43,6 @@ interface Matrix<E> {
  */
 fun <E> createMatrix(height: Int, width: Int, e: E): Matrix<E> {
     val result = MatrixImpl<E>(height, width)
-    if (height <= 0 || width <= 0) throw IllegalArgumentException("createMatrix")
     for (row in 0 until height) {
         for (column in 0 until width) {
             result[row, column] = e
@@ -60,6 +59,10 @@ fun <E> createMatrix(height: Int, width: Int, e: E): Matrix<E> {
 class MatrixImpl<E>(override val height: Int, override val width: Int) : Matrix<E> {
     private val map = mutableMapOf<Cell, E>()
 
+    init {
+        if (height <= 0 || width <= 0) throw IllegalArgumentException("MatrixImpl")
+    }
+
     override fun get(row: Int, column: Int): E {
         val cell = Cell(row, column)
         return get(cell)
@@ -67,7 +70,7 @@ class MatrixImpl<E>(override val height: Int, override val width: Int) : Matrix<
 
     override fun get(cell: Cell): E {
         if (cell.row !in 0 until height || cell.column !in 0 until width)
-            throw IllegalArgumentException("MatrixImpl")
+            throw IndexOutOfBoundsException("MatrixImpl")
         return map[cell] ?: throw IllegalArgumentException("MatrixImpl")
     }
 
@@ -77,19 +80,13 @@ class MatrixImpl<E>(override val height: Int, override val width: Int) : Matrix<
     }
 
     override fun set(cell: Cell, value: E) {
+        if (cell.row !in 0 until height || cell.column !in 0 until width)
+            throw IndexOutOfBoundsException("MatrixImpl")
         map[cell] = value
     }
 
-    override fun equals(other: Any?): Boolean {
-        if (other is MatrixImpl<*> && height == other.height && width == other.width) {
-            for (row in 0 until height) {
-                for (column in 0 until width) {
-                    if (map[Cell(row, column)] != other.map[Cell(row, column)]) return false
-                }
-            }
-        } else return false
-        return true
-    }
+    override fun equals(other: Any?): Boolean = other is MatrixImpl<*> &&
+            height == other.height && width == other.width && map == other.map
 
 
     override fun toString(): String {
