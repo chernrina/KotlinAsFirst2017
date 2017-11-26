@@ -95,7 +95,7 @@ class MatrixImpl<E>(override val height: Int, override val width: Int) : Matrix<
         for (row in 0 until height) {
             str.append("[")
             for (column in 0 until width) {
-                str.append(this[row, column])
+                str.append(map[Cell(row, column)])
                 str.append(", ")
             }
             str.append("]")
