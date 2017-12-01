@@ -215,13 +215,15 @@ fun sumNeighbours(matrix: Matrix<Int>): Matrix<Int> {
             var result: Int
             if (i == 0) {
                 if (matrix.height == 1) {
-                    if (i1 != matrix.width - 1) result = matrix[i, i1 + 1]
-                    else result = matrix[i, i1 - 1]
+                    if (i1 == 0) result = matrix[i, i1 + 1]
+                    else if (i1 == matrix.width - 1) result = matrix[i, i1 - 1]
+                    else result = matrix[i, i1 + 1] + matrix[i, i1 - 1]
                 } else
                     if (i1 == 0) {
                         if (matrix.width == 1) {
-                            if (i != matrix.height - 1) result = matrix[i + 1, i1]
-                            else result = matrix[i - 1, i1]
+                            if (i == 0) result = matrix[i + 1, i1]
+                            else if (i == matrix.height - 1) result = matrix[i - 1, i1]
+                            else result = matrix[i - 1, i1] + matrix[i + 1, i1]
                         } else
                             result = matrix[i, i1 + 1] + matrix[i + 1, i1 + 1] + matrix[i + 1, i1]
                     } else
