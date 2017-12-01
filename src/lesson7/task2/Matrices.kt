@@ -214,15 +214,23 @@ fun sumNeighbours(matrix: Matrix<Int>): Matrix<Int> {
         for (i1 in 0 until matrix.width) {
             var result: Int
             if (i == 0) {
-                if (i1 == 0) {
-                    result = matrix[i, i1 + 1] + matrix[i + 1, i1 + 1] + matrix[i + 1, i1]
+                if (matrix.height == 1) {
+                    if (i1 != matrix.width - 1) result = matrix[i, i1 + 1]
+                    else result = matrix[i, i1 - 1]
                 } else
-                    if (i1 == matrix.width - 1) {
-                        result = matrix[i, i1 - 1] + matrix[i + 1, i1 - 1] + matrix[i + 1, i1]
-                    } else {
-                        result = matrix[i, i1 - 1] + matrix[i, i1 + 1] + matrix[i + 1, i1] +
-                                matrix[i + 1, i1 - 1] + matrix[i + 1, i1 + 1]
-                    }
+                    if (i1 == 0) {
+                        if (matrix.width == 1) {
+                            if (i != matrix.height - 1) result = matrix[i + 1, i1]
+                            else result = matrix[i - 1, i1]
+                        } else
+                            result = matrix[i, i1 + 1] + matrix[i + 1, i1 + 1] + matrix[i + 1, i1]
+                    } else
+                        if (i1 == matrix.width - 1) {
+                            result = matrix[i, i1 - 1] + matrix[i + 1, i1 - 1] + matrix[i + 1, i1]
+                        } else {
+                            result = matrix[i, i1 - 1] + matrix[i, i1 + 1] + matrix[i + 1, i1] +
+                                    matrix[i + 1, i1 - 1] + matrix[i + 1, i1 + 1]
+                        }
             } else
                 if (i == matrix.height - 1) {
                     if (i1 == 0) {
@@ -382,6 +390,7 @@ fun canOpenLock(key: Matrix<Int>, lock: Matrix<Int>): Triple<Boolean, Int, Int> 
                     }
                 }
                 if (sum == key.height * key.width) return Triple(true, i, i1)
+                sum = 0
             }
         }
     }
