@@ -249,8 +249,11 @@ fun alignFileByWidth(inputName: String, outputName: String) {
             }
             if (number == 1) outputStream.write(lengthOfStr(str))
             else if (lengthOfLine + number - 1 == maxLength) {
+                var control = 0
                 for (word in str.split(" ")) {
                     outputStream.write(lengthOfStr(word))
+                    control++
+                    if (control == number) break
                     outputStream.write(" ")
                 }
             } else {
