@@ -222,7 +222,7 @@ fun lengthOfStr(task: String): String {
 }
 
 fun alignFileByWidth(inputName: String, outputName: String) {
-    val outputStream = File(inputName).bufferedWriter()
+    val outputStream = File(outputName).bufferedWriter()
     var maxLength = 0
     var lengthOfLine = 0
     for (line in File(inputName).readLines()) {
