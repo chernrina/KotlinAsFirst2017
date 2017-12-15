@@ -138,12 +138,15 @@ fun sibilants(inputName: String, outputName: String) {
 fun lengthOfMaxLine(inputName: String): Int {
     var max = 0
     for (line in File(inputName).readLines()) {
-        if (line.isEmpty()) break
-        val str = StringBuilder()
-        str.append(line)
-        while (str[0] == ' ') str.deleteCharAt(0)
-        while (str[str.length - 1] == ' ') str.deleteCharAt(str.length - 1)
-        if (str.length > max) max = str.length
+        if (line.isNotEmpty()) {
+            val str = StringBuilder()
+            str.append(line)
+            while (str[0] == ' ') str.deleteCharAt(0)
+            if (str.isNotEmpty()) {
+                while (str[str.length - 1] == ' ') str.deleteCharAt(str.length - 1)
+            }
+            if (str.length > max) max = str.length
+        }
     }
     return max
 }
@@ -165,6 +168,7 @@ fun centerFile(inputName: String, outputName: String) {
             if (str.length == maxLength) outputStream.write(str.toString())
             else {
                 var part1 = str.length / 2
+                if (maxLength % 2 == 0 && str.length % 2 == 1) part1++
                 while (part1 != part) {
                     outputStream.write(" ")
                     part1++
