@@ -176,7 +176,6 @@ fun centerFile(inputName: String, outputName: String) {
                 outputStream.write(str.toString())
             }
         }
-
         outputStream.newLine()
     }
     outputStream.close()
@@ -223,7 +222,64 @@ fun lengthOfStr(task: String): String {
 }
 
 fun alignFileByWidth(inputName: String, outputName: String) {
-    TODO()
+    val outputStream = File(inputName).bufferedWriter()
+    var maxLength = 0
+    var lengthOfLine = 0
+    for (line in File(inputName).readLines()) {
+        val str = lengthOfStr(line)
+        for (word in str.split(" ")) {
+            val letter = lengthOfStr(word)
+            lengthOfLine += letter.length + 1
+        }
+        if (lengthOfLine - 1 > maxLength) {
+            maxLength = lengthOfLine - 1
+        }
+        lengthOfLine = 0
+    }
+    for (line in File(inputName).readLines()) {
+        if (line.isEmpty()) outputStream.newLine()
+        else {
+            lengthOfLine = 0
+            var number = 0
+            val str = lengthOfStr(line)
+            for (word in str.split(" ")) {
+                val letter = lengthOfStr(word)
+                lengthOfLine += letter.length
+                number++
+            }
+            if (number == 1) outputStream.write(lengthOfStr(str))
+            else if (lengthOfLine + number - 1 == maxLength) {
+                for (word in str.split(" ")) {
+                    outputStream.write(lengthOfStr(word))
+                    outputStream.write(" ")
+                }
+            } else {
+                var control = 0
+                val length = maxLength - lengthOfLine
+                val space = length / (number - 1)
+                for (word in str.split(" ")) {
+                    outputStream.write(lengthOfStr(word))
+                    control++
+                    if (control == number) break
+                    var k = 0
+                    if ((maxLength - lengthOfLine) % (number - 1) != 0) {
+                        while (k != space + 1) {
+                            outputStream.write(" ")
+                            k++
+                        }
+                        lengthOfLine += 1
+                    } else {
+                        while (k != space) {
+                            outputStream.write(" ")
+                            k++
+                        }
+                    }
+                }
+            }
+            outputStream.newLine()
+        }
+    }
+    outputStream.close()
 }
 
 /**
