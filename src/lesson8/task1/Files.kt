@@ -72,7 +72,7 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
                         lengthOfElement++
                     }
                     if (lengthOfElement == element.length) number++
-                    if (lengthOfElement == 0 && length <= line.length - 1) length++
+                    length = length - lengthOfElement + 1
                 }
             }
         }
@@ -154,27 +154,25 @@ fun centerFile(inputName: String, outputName: String) {
     val part = maxLength / 2
     for (line in File(inputName).readLines()) {
         var lengthOfLine = line.length
-        if (lengthOfLine == maxLength) outputStream.write(line)
-        else {
-            if (lengthOfLine == 0) {
-                while (lengthOfLine != part) {
+        if (lengthOfLine == 0) {
+            while (lengthOfLine != part) {
+                outputStream.write(" ")
+                lengthOfLine++
+            }
+        } else {
+            val str = StringBuilder()
+            str.append(lengthOfStr(line))
+            if (str.length == maxLength) outputStream.write(str.toString())
+            else {
+                var part1 = str.length / 2
+                while (part1 != part) {
                     outputStream.write(" ")
-                    lengthOfLine++
+                    part1++
                 }
-            } else {
-                val str = StringBuilder()
-                str.append(lengthOfStr(line))
-                if (str.length == maxLength) outputStream.write(str.toString())
-                else {
-                    var part1 = str.length / 2
-                    while (part1 != part) {
-                        outputStream.write(" ")
-                        part1++
-                    }
-                    outputStream.write(str.toString())
-                }
+                outputStream.write(str.toString())
             }
         }
+
         outputStream.newLine()
     }
     outputStream.close()
