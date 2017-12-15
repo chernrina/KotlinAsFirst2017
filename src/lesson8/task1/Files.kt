@@ -62,16 +62,17 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
             val line1 = line.toLowerCase()
             if (element1 in line1) {
                 var length = 0
-                while (length < line.length - 1) {
+                while (length <= line.length - 1) {
                     var lengthOfElement = 0
                     var i = 0
-                    while (i <= element.length - 1 && line1[length] == element1[i]) {
+                    while (length <= line.length - 1 && i <= element.length - 1 &&
+                            line1[length] == element1[i]) {
                         length++
                         i++
                         lengthOfElement++
                     }
                     if (lengthOfElement == element.length) number++
-                    if (lengthOfElement == 0) length++
+                    if (lengthOfElement == 0 && length <= line.length - 1) length++
                 }
             }
         }
@@ -134,14 +135,22 @@ fun sibilants(inputName: String, outputName: String) {
  * 4) Число строк в выходном файле должно быть равно числу строк во входном (в т. ч. пустых)
  *
  */
+fun lengthOfMaxLine(inputName: String): Int {
+    var max = 0
+    for (line in File(inputName).readLines()) {
+        if (line.isEmpty()) break
+        val str = StringBuilder()
+        str.append(line)
+        while (str[0] == ' ') str.deleteCharAt(0)
+        while (str[str.length - 1] == ' ') str.deleteCharAt(str.length - 1)
+        if (str.length > max) max = str.length
+    }
+    return max
+}
+
 fun centerFile(inputName: String, outputName: String) {
     val outputStream = File(outputName).bufferedWriter()
-    var maxLength = 0
-    for (line in File(inputName).readLines()) {
-        if (line.length > maxLength) {
-            maxLength = line.length
-        }
-    }
+    val maxLength = lengthOfMaxLine(inputName)
     val part = maxLength / 2
     for (line in File(inputName).readLines()) {
         var lengthOfLine = line.length
@@ -154,17 +163,16 @@ fun centerFile(inputName: String, outputName: String) {
                 }
             } else {
                 val str = StringBuilder()
-                str.append(line)
-                var i = 0
-                while (str[i] == ' ') str.deleteCharAt(i)
-                i = str.length - 1
-                while (str[i] == ' ') str.deleteCharAt(i)
-                var part1 = str.length / 2
-                while (part1 != part) {
-                    outputStream.write(" ")
-                    part1++
+                str.append(lengthOfStr(line))
+                if (str.length == maxLength) outputStream.write(str.toString())
+                else {
+                    var part1 = str.length / 2
+                    while (part1 != part) {
+                        outputStream.write(" ")
+                        part1++
+                    }
+                    outputStream.write(str.toString())
                 }
-                outputStream.write(str.toString())
             }
         }
         outputStream.newLine()
@@ -199,6 +207,19 @@ fun centerFile(inputName: String, outputName: String) {
  * 7) В самой длинной строке каждая пара соседних слов должна быть отделена В ТОЧНОСТИ одним пробелом
  * 8) Если входной файл удовлетворяет требованиям 1-7, то он должен быть в точности идентичен выходному файлу
  */
+fun lengthOfStr(task: String): String {
+    val str = StringBuilder()
+    str.append(task)
+    if (str.isNotEmpty()) {
+        while (str[0] == ' ') str.deleteCharAt(0)
+        if (str.isNotEmpty()) {
+            while (str[str.length - 1] == ' ') str.deleteCharAt(str.length - 1)
+            return str.toString()
+        }
+    }
+    return ""
+}
+
 fun alignFileByWidth(inputName: String, outputName: String) {
     TODO()
 }
