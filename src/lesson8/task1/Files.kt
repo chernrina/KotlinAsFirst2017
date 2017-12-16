@@ -139,12 +139,7 @@ fun lengthOfMaxLine(inputName: String): Int {
     var max = 0
     for (line in File(inputName).readLines()) {
         if (line.isNotEmpty()) {
-            val str = StringBuilder()
-            str.append(line)
-            while (str[0] == ' ') str.deleteCharAt(0)
-            if (str.isNotEmpty()) {
-                while (str[str.length - 1] == ' ') str.deleteCharAt(str.length - 1)
-            }
+            val str = StringBuilder(line.trim())
             if (str.length > max) max = str.length
         }
     }
@@ -163,8 +158,7 @@ fun centerFile(inputName: String, outputName: String) {
                 lengthOfLine++
             }
         } else {
-            val str = StringBuilder()
-            str.append(lengthOfStr(line))
+            val str = StringBuilder(line.trim())
             if (str.length == maxLength) outputStream.write(str.toString())
             else {
                 var part1 = str.length / 2
@@ -208,28 +202,17 @@ fun centerFile(inputName: String, outputName: String) {
  * 7) В самой длинной строке каждая пара соседних слов должна быть отделена В ТОЧНОСТИ одним пробелом
  * 8) Если входной файл удовлетворяет требованиям 1-7, то он должен быть в точности идентичен выходному файлу
  */
-fun lengthOfStr(task: String): String {
-    val str = StringBuilder()
-    str.append(task)
-    if (str.isNotEmpty()) {
-        while (str[0] == ' ') str.deleteCharAt(0)
-        if (str.isNotEmpty()) {
-            while (str[str.length - 1] == ' ') str.deleteCharAt(str.length - 1)
-            return str.toString()
-        }
-    }
-    return ""
-}
 
 fun alignFileByWidth(inputName: String, outputName: String) {
     val outputStream = File(outputName).bufferedWriter()
     var maxLength = 0
     var lengthOfLine = 0
     for (line in File(inputName).readLines()) {
-        val str = lengthOfStr(line)
+        val str = line.trim()
         for (word in str.split(" ")) {
-            val letter = lengthOfStr(word)
-            lengthOfLine += letter.length + 1
+            if (word.isNotEmpty()) {
+                lengthOfLine += word.length + 1
+            }
         }
         if (lengthOfLine - 1 > maxLength) {
             maxLength = lengthOfLine - 1
@@ -241,40 +224,45 @@ fun alignFileByWidth(inputName: String, outputName: String) {
         else {
             lengthOfLine = 0
             var number = 0
-            val str = lengthOfStr(line)
+            val str = line.trim()
             for (word in str.split(" ")) {
-                val letter = lengthOfStr(word)
-                lengthOfLine += letter.length
-                number++
+                if (word.isNotEmpty()) {
+                    lengthOfLine += word.length
+                    number++
+                }
             }
-            if (number == 1) outputStream.write(lengthOfStr(str))
+            if (number == 1) outputStream.write(str)
             else if (lengthOfLine + number - 1 == maxLength) {
                 var control = 0
                 for (word in str.split(" ")) {
-                    outputStream.write(lengthOfStr(word))
-                    control++
-                    if (control == number) break
-                    outputStream.write(" ")
+                    if (word.isNotEmpty()) {
+                        outputStream.write(word)
+                        control++
+                        if (control == number) break
+                        outputStream.write(" ")
+                    }
                 }
             } else {
                 var control = 0
                 val length = maxLength - lengthOfLine
                 val space = length / (number - 1)
                 for (word in str.split(" ")) {
-                    outputStream.write(lengthOfStr(word))
-                    control++
-                    if (control == number) break
-                    var k = 0
-                    if ((maxLength - lengthOfLine) % (number - 1) != 0) {
-                        while (k != space + 1) {
-                            outputStream.write(" ")
-                            k++
-                        }
-                        lengthOfLine += 1
-                    } else {
-                        while (k != space) {
-                            outputStream.write(" ")
-                            k++
+                    if (word.isNotEmpty()) {
+                        outputStream.write(word)
+                        control++
+                        if (control == number) break
+                        var k = 0
+                        if ((maxLength - lengthOfLine) % (number - 1) != 0) {
+                            while (k != space + 1) {
+                                outputStream.write(" ")
+                                k++
+                            }
+                            lengthOfLine += 1
+                        } else {
+                            while (k != space) {
+                                outputStream.write(" ")
+                                k++
+                            }
                         }
                     }
                 }
