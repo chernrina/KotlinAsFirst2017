@@ -209,23 +209,27 @@ fun alignFileByWidth(inputName: String, outputName: String) {
         listOfFile.add(listOfLine)
     }
     for (list in listOfFile) {
-        if (list.size == 1 && list[0] == "") outputStream.newLine()
+        var number = 0
+        for (word in list) {
+            if (word != "") number++
+        }
+        if (number == 0) outputStream.newLine()
         else {
             if (list.size == 1) outputStream.write(list.joinToString())
             else {
                 var lengthOfLine = 0
                 for (word in list) lengthOfLine += word.length
-                if (lengthOfLine + list.size - 1 == maxLength) {
+                if (lengthOfLine + number - 1 == maxLength) {
                     outputStream.write(list.joinToString(separator = (" ")).trimEnd())
                 } else {
                     val length = maxLength - lengthOfLine
-                    val space = length / (list.size - 1)
+                    val space = length / (number - 1)
                     val str = StringBuilder()
                     for (word in list) {
                         if (word.isNotEmpty()) {
                             str.append(word)
                             var k = 0
-                            if ((maxLength - lengthOfLine) % (list.size - 1) != 0) {
+                            if ((maxLength - lengthOfLine) % (number - 1) != 0) {
                                 while (k != space + 1) {
                                     str.append(" ")
                                     k++
