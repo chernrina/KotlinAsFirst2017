@@ -126,9 +126,9 @@ fun sibilants(inputName: String, outputName: String) {
  * 4) Число строк в выходном файле должно быть равно числу строк во входном (в т. ч. пустых)
  *
  */
-fun lengthOfMaxLine(inputName: List<String>): Int {
+fun lengthOfMaxLine(list: List<String>): Int {
     var max = 0
-    for (line in inputName) {
+    for (line in list) {
         val str = line.trim()
         if (str.length > max) max = str.length
     }
@@ -192,66 +192,54 @@ fun centerFile(inputName: String, outputName: String) {
 fun alignFileByWidth(inputName: String, outputName: String) {
     val outputStream = File(outputName).bufferedWriter()
     var maxLength = 0
-    val listOfFile = mutableListOf<String>()
+    val listOfFile = mutableListOf<List<String>>()
     for (line in File(inputName).readLines()) {
+        val listOfLine = mutableListOf<String>()
         var lengthOfLine = 0
         val str = line.trim()
         for (word in str.split(" ")) {
             if (word.isNotEmpty()) {
                 lengthOfLine += word.length + 1
             }
+            listOfLine.add(word)
         }
         if (lengthOfLine - 1 > maxLength) {
             maxLength = lengthOfLine - 1
         }
-        listOfFile.add(line)
+        listOfFile.add(listOfLine)
     }
-    for (line in listOfFile) {
-        if (line.isEmpty()) outputStream.newLine()
+    for (list in listOfFile) {
+        if (list.size == 1 && list[0] == "") outputStream.newLine()
         else {
-            var lengthOfLine = 0
-            var number = 0
-            val str = line.trim()
-            for (word in str.split(" ")) {
-                if (word.isNotEmpty()) {
-                    lengthOfLine += word.length
-                    number++
-                }
-            }
-            if (number == 1) outputStream.write(str)
-            else if (lengthOfLine + number - 1 == maxLength) {
-                var control = 0
-                for (word in str.split(" ")) {
-                    if (word.isNotEmpty()) {
-                        outputStream.write(word)
-                        control++
-                        if (control == number) break
-                        outputStream.write(" ")
-                    }
-                }
-            } else {
-                var control = 0
-                val length = maxLength - lengthOfLine
-                val space = length / (number - 1)
-                for (word in str.split(" ")) {
-                    if (word.isNotEmpty()) {
-                        outputStream.write(word)
-                        control++
-                        if (control == number) break
-                        var k = 0
-                        if ((maxLength - lengthOfLine) % (number - 1) != 0) {
-                            while (k != space + 1) {
-                                outputStream.write(" ")
-                                k++
-                            }
-                            lengthOfLine += 1
-                        } else {
-                            while (k != space) {
-                                outputStream.write(" ")
-                                k++
+            if (list.size == 1) outputStream.write(list.joinToString())
+            else {
+                var lengthOfLine = 0
+                for (word in list) lengthOfLine += word.length
+                if (lengthOfLine + list.size - 1 == maxLength) {
+                    outputStream.write(list.joinToString(separator = (" ")).trimEnd())
+                } else {
+                    val length = maxLength - lengthOfLine
+                    val space = length / (list.size - 1)
+                    val str = StringBuilder()
+                    for (word in list) {
+                        if (word.isNotEmpty()) {
+                            str.append(word)
+                            var k = 0
+                            if ((maxLength - lengthOfLine) % (list.size - 1) != 0) {
+                                while (k != space + 1) {
+                                    str.append(" ")
+                                    k++
+                                }
+                                lengthOfLine += 1
+                            } else {
+                                while (k != space) {
+                                    str.append(" ")
+                                    k++
+                                }
                             }
                         }
                     }
+                    outputStream.write(str.toString().trimEnd())
                 }
             }
             outputStream.newLine()
